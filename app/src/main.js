@@ -152,10 +152,15 @@ async function poll () {
     acumular('(inactivo)', 'idle', paso, true)
     return
   }
-  const w = await ventanaActiva()
-  if (!w) return
-  const cat = categoria(w.app)
-  acumular(w.app, cat, paso, false, c.settings.captureTitles ? w.title : null)
+  let w = null
+  try { w = await ventanaActiva() } catch (e) { console.warn('[poll]', e.message) }
+  if (w && w.app) {
+    acumular(w.app, categoria(w.app), paso, false, c.settings.captureTitles ? w.title : null)
+  } else {
+    // No se pudo leer la app (permiso/compatibilidad), pero el usuario ESTÁ
+    // activo: igual contamos el tiempo para no perder el dato.
+    acumular('(activo)', 'otros', paso, false)
+  }
 }
 
 function acumular (appName, cat, seg, idle, titulo = null) {
