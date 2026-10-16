@@ -31,6 +31,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   windows:
+    needs: mac
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4

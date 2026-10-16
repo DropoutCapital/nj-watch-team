@@ -1,0 +1,5 @@
+# Publicar SOLO la landing en Vercel (si el Root Directory quedó en la raíz).
+# Evita exponer el resto del repo como estáticos.
+/*
+!index.html
+!vercel.json

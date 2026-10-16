@@ -1,6 +1,6 @@
 {
   "name": "nj-watch-team",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "description": "Medidor de tareas laborales (con consentimiento) — qué apps se usan, cuánto tiempo y qué conviene automatizar. Sin contenido tecleado ni credenciales.",
   "author": "DropoutCapital",
   "license": "UNLICENSED",
@@ -26,7 +26,7 @@
     "productName": "NJ Watch Team",
     "files": ["src/**/*", "assets/**/*"],
     "publish": [
-      { "provider": "github", "owner": "DropoutCapital", "repo": "nj-watch-team" }
+      { "provider": "github", "owner": "DropoutCapital", "repo": "nj-watch-team", "releaseType": "release" }
     ],
     "mac": {
       "category": "public.app-category.productivity",
