@@ -199,11 +199,10 @@ async function maybeCapture () {
     // Anuncio visible ANTES de guardar.
     new Notification({ title: 'NJ Watch Team', body: 'Captura de pantalla tomada (medición activa).' }).show()
     const png = sources[0].thumbnail.toPNG()
-    const cli = sb.init()
-    if (!cli) return
+    if (!c.empleadoId) return
     const filePath = `${c.empleadoId}/${Date.now()}.png`
-    const up = await cli.storage.from('capturas').upload(filePath, png, { contentType: 'image/png' })
-    if (!up.error) {
+    const ok = await sb.uploadFile('capturas', filePath, png, 'image/png')
+    if (ok) {
       await sb.insert('capturas', {
         id: crypto.randomUUID(), sesion_id: sesionId, empleado_id: c.empleadoId,
         ts: new Date().toISOString(), storage_path: filePath, categoria: null
