@@ -39,7 +39,7 @@ for (const emp of empleados) {
   // El nombre de app viene del sistema del empleado = dato NO confiable:
   // lo saneamos (sin saltos de línea/control, tope de largo) para que no
   // pueda inyectar instrucciones al modelo más abajo.
-  const limpia = (s) => String(s || '').replace(/[\u0000-\u001f\u007f]/g, ' ').trim().slice(0, 80)
+  const limpia = (s) => String(s || '').replace(/[\u0000-\u001f\u007f-\u009f\u2028\u2029]/g, ' ').trim().slice(0, 80)
   const porCat = {}, porApp = {}
   let activo = 0, idle = 0
   for (const r of ev) {
@@ -59,8 +59,14 @@ for (const emp of empleados) {
       .map(([app, s]) => ({ app, horas: horas(s) }))
   }
 
-  // Al modelo le pasamos un id opaco, NUNCA el nombre real del empleado.
-  const recomendaciones = DS ? await recomendar(emp.id.slice(0, 8), resumen) : [{
+  // Al modelo NO le llega texto no confiable: nombre de empleado → id opaco,
+  // y nombres de app → etiquetas opacas (app_1, app_2...). La categoría ya es
+  // de una lista fija. En la base sí guardamos los nombres reales (resumen).
+  const resumenIA = {
+    ...resumen,
+    top_apps: resumen.top_apps.map((a, i) => ({ app: `app_${i + 1}`, horas: a.horas }))
+  }
+  const recomendaciones = DS ? await recomendar(emp.id.slice(0, 8), resumenIA) : [{
     nota: 'Sin DEEPSEEK_API_KEY: solo se guardó el resumen cuantitativo.'
   }]
 
