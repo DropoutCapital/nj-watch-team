@@ -3,70 +3,101 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>NJ Watch Team — Mide tu trabajo, automatiza lo repetitivo</title>
+<meta name="robots" content="noindex,nofollow">
+<title>NJ Watch Team — Descarga</title>
 <style>
-  :root { --tinta:#111; --suave:#6b7280; --borde:#ececec; --acento:#111; }
+  :root { --bg:#0b0b0c; --panel:#151517; --tinta:#f5f5f5; --suave:#9ca3af; --borde:#2a2a2e; --acento:#fff; }
   * { box-sizing:border-box; }
-  body { font:16px/1.6 -apple-system,Segoe UI,Roboto,Helvetica,sans-serif; color:var(--tinta); margin:0; background:#fafafa; }
-  .wrap { max-width:760px; margin:0 auto; padding:72px 24px; }
-  h1 { font-size:40px; line-height:1.15; letter-spacing:-.02em; margin:0 0 14px; }
-  .lead { font-size:19px; color:var(--suave); margin:0 0 36px; }
-  .dl { display:flex; gap:14px; flex-wrap:wrap; margin-bottom:14px; }
-  .btn { display:inline-flex; align-items:center; gap:10px; padding:15px 26px; border-radius:12px; background:var(--acento); color:#fff; text-decoration:none; font-weight:600; font-size:16px; }
-  .btn.sec { background:#fff; color:var(--tinta); border:1px solid var(--borde); }
-  .hint { font-size:13px; color:var(--suave); margin-bottom:56px; }
-  .grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
-  .card { background:#fff; border:1px solid var(--borde); border-radius:14px; padding:22px; }
-  .card h3 { margin:0 0 10px; font-size:14px; text-transform:uppercase; letter-spacing:.05em; }
-  .si h3 { color:#16a34a; } .no h3 { color:#dc2626; }
-  ul { margin:0; padding-left:20px; } li { margin:6px 0; }
-  .foot { margin-top:48px; font-size:13px; color:var(--suave); }
-  @media (max-width:560px){ .grid{grid-template-columns:1fr} h1{font-size:30px} }
+  html,body { height:100%; }
+  body { margin:0; font:16px/1.55 -apple-system,Segoe UI,Roboto,Helvetica,sans-serif; color:var(--tinta); background:var(--bg); display:flex; align-items:center; justify-content:center; padding:24px; }
+  .wrap { width:100%; max-width:420px; }
+  h1 { font-size:26px; letter-spacing:-.02em; margin:0 0 6px; }
+  .sub { color:var(--suave); margin:0 0 26px; font-size:15px; }
+  .panel { background:var(--panel); border:1px solid var(--borde); border-radius:16px; padding:24px; }
+  label { font-size:13px; color:var(--suave); display:block; margin-bottom:8px; }
+  .pin { width:100%; font-size:28px; letter-spacing:12px; text-align:center; padding:14px; border-radius:12px; border:1px solid var(--borde); background:#0e0e10; color:#fff; }
+  .pin:focus { outline:none; border-color:#555; }
+  button { width:100%; margin-top:16px; padding:14px; border:0; border-radius:12px; font-size:16px; font-weight:700; cursor:pointer; background:var(--acento); color:#111; }
+  button.ghost { background:transparent; color:var(--tinta); border:1px solid var(--borde); }
+  .err { color:#f87171; font-size:13px; min-height:18px; margin-top:10px; text-align:center; }
+  .hidden { display:none; }
+  .os { display:flex; gap:12px; margin-top:8px; }
+  .os a { flex:1; text-decoration:none; }
+  .osbtn { display:flex; flex-direction:column; align-items:center; gap:8px; padding:20px 10px; border:1px solid var(--borde); border-radius:14px; background:#0e0e10; color:var(--tinta); }
+  .osbtn:hover { border-color:#555; }
+  .osbtn .big { font-size:30px; }
+  .osbtn small { color:var(--suave); }
+  .reco { font-size:12px; color:#86efac; text-align:center; margin-top:14px; min-height:16px; }
+  .foot { color:var(--suave); font-size:12px; text-align:center; margin-top:22px; line-height:1.5; }
+  .steps { font-size:13px; color:var(--suave); margin:16px 0 0; padding-left:18px; }
+  .steps li { margin:4px 0; }
 </style>
 </head>
 <body>
 <div class="wrap">
-  <h1>Mide tu trabajo. Automatiza lo repetitivo.</h1>
-  <p class="lead">Una app liviana que, <strong>con tu consentimiento</strong> y cuando tú la activas, mide en qué apps pasas el tiempo para detectar qué tareas conviene automatizar. Botón de activar/desactivar siempre a mano.</p>
+  <h1>NJ Watch Team</h1>
+  <p class="sub">Acceso del equipo</p>
 
-  <div class="dl">
-    <a class="btn" id="dlMain" href="#">Descargar</a>
-    <a class="btn sec" id="dlOther" href="#">Otra plataforma</a>
-  </div>
-  <p class="hint" id="hint">Detectando tu sistema…</p>
-
-  <div class="grid">
-    <div class="card si">
-      <h3>Qué mide</h3>
-      <ul>
-        <li>App/ventana activa y tiempo en cada una</li>
-        <li>Categoría (planilla, correo, navegador…)</li>
-        <li>Activo vs. inactivo</li>
-      </ul>
-    </div>
-    <div class="card no">
-      <h3>Qué nunca hace</h3>
-      <ul>
-        <li>Registrar lo que escribes</li>
-        <li>Guardar contraseñas o credenciales</li>
-        <li>Medir algo con la app en pausa</li>
-      </ul>
-    </div>
+  <!-- Paso 1: PIN -->
+  <div class="panel" id="pinPanel">
+    <label>Ingresa el PIN de acceso</label>
+    <input class="pin" id="pin" inputmode="numeric" maxlength="4" placeholder="····" autocomplete="off">
+    <button id="entrar">Entrar</button>
+    <div class="err" id="err"></div>
   </div>
 
-  <p class="foot">NJ Watch Team · DropoutCapital. Uso interno con consentimiento del equipo.</p>
+  <!-- Paso 2: elegir SO -->
+  <div class="panel hidden" id="osPanel">
+    <label>Elige tu sistema para descargar la app</label>
+    <div class="os">
+      <a id="aWin" href="#"><div class="osbtn"><span class="big">🪟</span><strong>Windows</strong><small>.exe</small></div></a>
+      <a id="aMac" href="#"><div class="osbtn"><span class="big"></span><strong>Mac</strong><small>.dmg</small></div></a>
+    </div>
+    <div class="reco" id="reco"></div>
+    <ol class="steps">
+      <li>Descarga e instala (doble clic).</li>
+      <li>Acepta el consentimiento la primera vez.</li>
+      <li>Queda midiendo sola en cada encendido; puedes pausarla desde el ícono.</li>
+    </ol>
+    <button class="ghost" id="salir" style="margin-top:18px">Salir</button>
+  </div>
+
+  <p class="foot">Mide uso de apps y tiempo para mejorar el flujo de trabajo.<br>No registra lo que escribes ni contraseñas.</p>
 </div>
 
 <script>
-  // Ajusta estas URLs a tus GitHub Releases cuando publiques los instaladores.
-  const REL = 'https://github.com/DropoutCapital/nj-watch-team/releases/latest/download/'
-  const WIN = REL + 'NJ-Watch-Team-Setup.exe'
-  const MAC = REL + 'NJ-Watch-Team.dmg'
-  const esMac = /Mac/i.test(navigator.platform) || /Mac/i.test(navigator.userAgent)
-  const main = document.getElementById('dlMain'), other = document.getElementById('dlOther')
-  if (esMac) { main.textContent='Descargar para Mac'; main.href=MAC; other.textContent='Descargar para Windows'; other.href=WIN; }
-  else       { main.textContent='Descargar para Windows'; main.href=WIN; other.textContent='Descargar para Mac'; other.href=MAC; }
-  document.getElementById('hint').textContent = 'Al instalar verás una pantalla de consentimiento. Puedes desactivar la medición cuando quieras.'
+  // === Configuración ===
+  const PIN = '2022';
+  // Base de descarga (GitHub Releases). Funciona cuando el repo/los binarios son públicos.
+  const DL_BASE = 'https://github.com/DropoutCapital/nj-watch-team/releases/latest/download/';
+  const WIN = DL_BASE + 'NJ-Watch-Team-Setup.exe';
+  const MAC = DL_BASE + 'NJ-Watch-Team.dmg';
+
+  const $ = id => document.getElementById(id);
+  const esMac = /Mac/i.test(navigator.platform) || /Mac/i.test(navigator.userAgent);
+
+  // --- PIN (gate simple del lado cliente; no es seguridad fuerte) ---
+  function intentar () {
+    if ($('pin').value === PIN) {
+      sessionStorage.setItem('njw_ok', '1');
+      mostrarOS();
+    } else {
+      $('err').textContent = 'PIN incorrecto';
+      $('pin').value = '';
+      $('pin').focus();
+    }
+  }
+  function mostrarOS () {
+    $('pinPanel').classList.add('hidden');
+    $('osPanel').classList.remove('hidden');
+    $('aWin').href = WIN; $('aMac').href = MAC;
+    $('reco').textContent = esMac ? 'Recomendado para ti: Mac' : 'Recomendado para ti: Windows';
+  }
+  $('entrar').onclick = intentar;
+  $('pin').addEventListener('keydown', e => { if (e.key === 'Enter') intentar(); });
+  $('salir').onclick = () => { sessionStorage.removeItem('njw_ok'); location.reload(); };
+  if (sessionStorage.getItem('njw_ok') === '1') mostrarOS();
+  $('pin').focus();
 </script>
 </body>
 </html>

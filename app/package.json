@@ -14,7 +14,8 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.45.0",
-    "active-win": "^7.7.2"
+    "active-win": "^7.7.2",
+    "electron-updater": "^6.3.9"
   },
   "devDependencies": {
     "electron": "^31.0.0",
@@ -24,6 +25,9 @@
     "appId": "cl.dropout.njwatchteam",
     "productName": "NJ Watch Team",
     "files": ["src/**/*", "assets/**/*"],
+    "publish": [
+      { "provider": "github", "owner": "DropoutCapital", "repo": "nj-watch-team" }
+    ],
     "mac": {
       "category": "public.app-category.productivity",
       "target": [{ "target": "dmg", "arch": "universal" }],

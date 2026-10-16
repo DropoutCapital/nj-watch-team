@@ -8,6 +8,8 @@ const cfg = require('./lib/config')
 const sb = require('./lib/supabase')
 const { ventanaActiva } = require('./lib/tracker')
 const { categoria } = require('./lib/categorias')
+let autoUpdater = null
+try { autoUpdater = require('electron-updater').autoUpdater } catch { /* dev sin dep */ }
 
 let tray = null
 let win = null
@@ -77,6 +79,13 @@ function actualizarTray () {
     { label: 'Salir', click: () => { app.isQuitting = true; app.quit() } }
   ])
   tray.setContextMenu(menu)
+}
+
+// Auto-inicio con el sistema (abierto en segundo plano al prender el PC).
+function aplicarLoginItem (activar) {
+  try {
+    app.setLoginItemSettings({ openAtLogin: !!activar, openAsHidden: true, args: ['--autostart'] })
+  } catch (e) { console.warn('[loginItem]', e.message) }
 }
 
 // ───────────────────────── Registro empleado ─────────────────────────
@@ -208,9 +217,12 @@ function estado () {
 ipcMain.handle('getState', () => estado())
 ipcMain.handle('toggle', () => toggle())
 ipcMain.handle('saveProfile', (_e, { nombre, email }) => cfg.set({ nombre, email }))
-ipcMain.handle('aceptarConsent', (_e, { nombre, email }) => {
+ipcMain.handle('aceptarConsent', async (_e, { nombre, email }) => {
   cfg.set({ consentAccepted: true, nombre: nombre || '', email: email || '' })
+  aplicarLoginItem(true)                 // desde ahora arranca con el PC
   win.loadFile(path.join(__dirname, 'renderer.html'))
+  const c = cfg.load()
+  if (c.settings.autoStart && !c.monitoring) { await iniciar(); actualizarTray() }
 })
 ipcMain.handle('setSetting', (_e, patch) => {
   const c = cfg.load()
@@ -224,7 +236,7 @@ ipcMain.handle('rechazarConsent', () => { app.isQuitting = true; app.quit() })
 const unico = app.requestSingleInstanceLock()
 if (!unico) { app.quit() } else {
   app.on('second-instance', () => { if (win) win.show() })
-  app.whenReady().then(() => {
+  app.whenReady().then(async () => {
     crearVentana()
     crearTray()
     // Buffer offline: reintenta subir lo encolado cada 30 s y apenas arranca,
@@ -234,6 +246,24 @@ if (!unico) { app.quit() } else {
     // Y al despertar/desbloquear el equipo (típico cuando vuelve la red).
     powerMonitor.on('resume', () => sb.flushQueue())
     powerMonitor.on('unlock-screen', () => sb.flushQueue())
+
+    const c = cfg.load()
+    // Auto-inicio al prender el PC (solo si ya consintió).
+    aplicarLoginItem(c.consentAccepted)
+    // Auto-reanudar la medición en cada arranque (sigue visible y pausable).
+    if (c.consentAccepted && c.settings.autoStart && !c.monitoring) {
+      await iniciar()
+      actualizarTray()
+    }
+    // Auto-actualización desde GitHub Releases (solo app empaquetada).
+    if (autoUpdater && app.isPackaged) {
+      autoUpdater.autoDownload = true
+      autoUpdater.on('update-downloaded', () => {
+        new Notification({ title: 'NJ Watch Team', body: 'Actualización lista, se aplicará al reiniciar.' }).show()
+      })
+      autoUpdater.checkForUpdates().catch(() => {})
+      setInterval(() => autoUpdater.checkForUpdates().catch(() => {}), 6 * 3600 * 1000)
+    }
   })
   app.on('window-all-closed', (e) => { /* vive en tray */ })
 }

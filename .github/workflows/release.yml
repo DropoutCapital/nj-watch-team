@@ -1,9 +1,11 @@
-name: Compilar instaladores (Mac + Windows)
+name: Compilar y publicar instaladores (Mac + Windows)
 
-# Dispara al crear un tag vX.Y.Z (p.ej. git tag v0.1.0 && git push --tags),
-# o manualmente desde la pestaña Actions. Compila cada instalador en su propio
-# sistema operativo y los publica en la Release de ese tag. La landing
-# (web/index.html) descarga desde /releases/latest/download.
+# Dispara al crear un tag vX.Y.Z (git tag v0.1.1 && git push origin v0.1.1)
+# o manualmente. Compila cada instalador en su propio SO y lo PUBLICA en la
+# Release del tag junto con latest.yml / latest-mac.yml (feed del auto-update).
+# Requiere que las Releases sean accesibles públicamente para que:
+#   - los botones de la landing descarguen, y
+#   - electron-updater lea el feed de actualización.
 
 on:
   push:
@@ -23,19 +25,10 @@ jobs:
           node-version: 20
       - run: npm install
         working-directory: app
-      - run: npx electron-builder --mac --publish never
+      - run: npx electron-builder --mac --publish always
         working-directory: app
-      - name: Publicar .dmg en la Release
-        if: startsWith(github.ref, 'refs/tags/')
-        uses: softprops/action-gh-release@v2
-        with:
-          files: app/dist/*.dmg
-      - name: Guardar artefacto (si fue manual)
-        if: ${{ !startsWith(github.ref, 'refs/tags/') }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: mac-dmg
-          path: app/dist/*.dmg
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   windows:
     runs-on: windows-latest
@@ -46,16 +39,7 @@ jobs:
           node-version: 20
       - run: npm install
         working-directory: app
-      - run: npx electron-builder --win --publish never
+      - run: npx electron-builder --win --publish always
         working-directory: app
-      - name: Publicar .exe en la Release
-        if: startsWith(github.ref, 'refs/tags/')
-        uses: softprops/action-gh-release@v2
-        with:
-          files: app/dist/*.exe
-      - name: Guardar artefacto (si fue manual)
-        if: ${{ !startsWith(github.ref, 'refs/tags/') }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: windows-exe
-          path: app/dist/*.exe
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

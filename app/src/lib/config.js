@@ -15,6 +15,7 @@ const DEFAULTS = {
   consentAccepted: false,
   monitoring: false,          // SIEMPRE arranca apagado
   settings: {
+    autoStart: true,          // arranca a medir sola en cada encendido (tras consentir)
     pollSeconds: 15,          // cada cuánto mira la app activa
     idleThresholdSeg: 60,     // si no hay actividad N s, cuenta como inactivo
     flushSeconds: 60,         // cada cuánto sube eventos a Supabase
