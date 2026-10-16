@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>NJ Watch Team — Descarga</title>
+<style>
+  :root { --bg:#0b0b0c; --panel:#151517; --tinta:#f5f5f5; --suave:#9ca3af; --borde:#2a2a2e; --acento:#fff; }
+  * { box-sizing:border-box; }
+  html,body { height:100%; }
+  body { margin:0; font:16px/1.55 -apple-system,Segoe UI,Roboto,Helvetica,sans-serif; color:var(--tinta); background:var(--bg); display:flex; align-items:center; justify-content:center; padding:24px; }
+  .wrap { width:100%; max-width:420px; }
+  h1 { font-size:26px; letter-spacing:-.02em; margin:0 0 6px; }
+  .sub { color:var(--suave); margin:0 0 26px; font-size:15px; }
+  .panel { background:var(--panel); border:1px solid var(--borde); border-radius:16px; padding:24px; }
+  label { font-size:13px; color:var(--suave); display:block; margin-bottom:8px; }
+  .pin { width:100%; font-size:28px; letter-spacing:12px; text-align:center; padding:14px; border-radius:12px; border:1px solid var(--borde); background:#0e0e10; color:#fff; }
+  .pin:focus { outline:none; border-color:#555; }
+  button { width:100%; margin-top:16px; padding:14px; border:0; border-radius:12px; font-size:16px; font-weight:700; cursor:pointer; background:var(--acento); color:#111; }
+  button.ghost { background:transparent; color:var(--tinta); border:1px solid var(--borde); }
+  .err { color:#f87171; font-size:13px; min-height:18px; margin-top:10px; text-align:center; }
+  .hidden { display:none; }
+  .os { display:flex; gap:12px; margin-top:8px; }
+  .os a { flex:1; text-decoration:none; }
+  .osbtn { display:flex; flex-direction:column; align-items:center; gap:8px; padding:20px 10px; border:1px solid var(--borde); border-radius:14px; background:#0e0e10; color:var(--tinta); }
+  .osbtn:hover { border-color:#555; }
+  .osbtn .big { font-size:30px; }
+  .osbtn small { color:var(--suave); }
+  .reco { font-size:12px; color:#86efac; text-align:center; margin-top:14px; min-height:16px; }
+  .foot { color:var(--suave); font-size:12px; text-align:center; margin-top:22px; line-height:1.5; }
+  .steps { font-size:13px; color:var(--suave); margin:16px 0 0; padding-left:18px; }
+  .steps li { margin:4px 0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>NJ Watch Team</h1>
+  <p class="sub">Acceso del equipo</p>
+
+  <!-- Paso 1: PIN -->
+  <div class="panel" id="pinPanel">
+    <label>Ingresa el PIN de acceso</label>
+    <input class="pin" id="pin" inputmode="numeric" maxlength="4" placeholder="····" autocomplete="off">
+    <button id="entrar">Entrar</button>
+    <div class="err" id="err"></div>
+  </div>
+
+  <!-- Paso 2: elegir SO -->
+  <div class="panel hidden" id="osPanel">
+    <label>Elige tu sistema para descargar la app</label>
+    <div class="os">
+      <a id="aWin" href="#"><div class="osbtn"><span class="big">🪟</span><strong>Windows</strong><small>.exe</small></div></a>
+      <a id="aMac" href="#"><div class="osbtn"><span class="big"></span><strong>Mac</strong><small>.dmg</small></div></a>
+    </div>
+    <div class="reco" id="reco"></div>
+    <ol class="steps">
+      <li>Descarga e instala (doble clic).</li>
+      <li>Acepta el consentimiento la primera vez.</li>
+      <li>Queda midiendo sola en cada encendido; puedes pausarla desde el ícono.</li>
+    </ol>
+    <button class="ghost" id="salir" style="margin-top:18px">Salir</button>
+  </div>
+
+  <p class="foot">Mide uso de apps y tiempo para mejorar el flujo de trabajo.<br>No registra lo que escribes ni contraseñas.</p>
+</div>
+
+<script>
+  // === Configuración ===
+  const PIN = '2022';
+  // Base de descarga (GitHub Releases). Funciona cuando el repo/los binarios son públicos.
+  const DL_BASE = 'https://github.com/DropoutCapital/nj-watch-team/releases/latest/download/';
+  const WIN = DL_BASE + 'NJ-Watch-Team-Setup.exe';
+  const MAC = DL_BASE + 'NJ-Watch-Team.dmg';
+
+  const $ = id => document.getElementById(id);
+  const esMac = /Mac/i.test(navigator.platform) || /Mac/i.test(navigator.userAgent);
+
+  // --- PIN (gate simple del lado cliente; no es seguridad fuerte) ---
+  function intentar () {
+    if ($('pin').value === PIN) {
+      sessionStorage.setItem('njw_ok', '1');
+      mostrarOS();
+    } else {
+      $('err').textContent = 'PIN incorrecto';
+      $('pin').value = '';
+      $('pin').focus();
+    }
+  }
+  function mostrarOS () {
+    $('pinPanel').classList.add('hidden');
+    $('osPanel').classList.remove('hidden');
+    $('aWin').href = WIN; $('aMac').href = MAC;
+    $('reco').textContent = esMac ? 'Recomendado para ti: Mac' : 'Recomendado para ti: Windows';
+  }
+  $('entrar').onclick = intentar;
+  $('pin').addEventListener('keydown', e => { if (e.key === 'Enter') intentar(); });
+  $('salir').onclick = () => { sessionStorage.removeItem('njw_ok'); location.reload(); };
+  if (sessionStorage.getItem('njw_ok') === '1') mostrarOS();
+  $('pin').focus();
+</script>
+</body>
+</html>
