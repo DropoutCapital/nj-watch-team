@@ -1,0 +1,6 @@
+node_modules/
+dist/
+.env
+*.log
+.DS_Store
+# No subir claves reales: deja supabase.public.json con placeholders en el repo

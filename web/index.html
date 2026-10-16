@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NJ Watch Team — Mide tu trabajo, automatiza lo repetitivo</title>
+<style>
+  :root { --tinta:#111; --suave:#6b7280; --borde:#ececec; --acento:#111; }
+  * { box-sizing:border-box; }
+  body { font:16px/1.6 -apple-system,Segoe UI,Roboto,Helvetica,sans-serif; color:var(--tinta); margin:0; background:#fafafa; }
+  .wrap { max-width:760px; margin:0 auto; padding:72px 24px; }
+  h1 { font-size:40px; line-height:1.15; letter-spacing:-.02em; margin:0 0 14px; }
+  .lead { font-size:19px; color:var(--suave); margin:0 0 36px; }
+  .dl { display:flex; gap:14px; flex-wrap:wrap; margin-bottom:14px; }
+  .btn { display:inline-flex; align-items:center; gap:10px; padding:15px 26px; border-radius:12px; background:var(--acento); color:#fff; text-decoration:none; font-weight:600; font-size:16px; }
+  .btn.sec { background:#fff; color:var(--tinta); border:1px solid var(--borde); }
+  .hint { font-size:13px; color:var(--suave); margin-bottom:56px; }
+  .grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  .card { background:#fff; border:1px solid var(--borde); border-radius:14px; padding:22px; }
+  .card h3 { margin:0 0 10px; font-size:14px; text-transform:uppercase; letter-spacing:.05em; }
+  .si h3 { color:#16a34a; } .no h3 { color:#dc2626; }
+  ul { margin:0; padding-left:20px; } li { margin:6px 0; }
+  .foot { margin-top:48px; font-size:13px; color:var(--suave); }
+  @media (max-width:560px){ .grid{grid-template-columns:1fr} h1{font-size:30px} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Mide tu trabajo. Automatiza lo repetitivo.</h1>
+  <p class="lead">Una app liviana que, <strong>con tu consentimiento</strong> y cuando tú la activas, mide en qué apps pasas el tiempo para detectar qué tareas conviene automatizar. Botón de activar/desactivar siempre a mano.</p>
+
+  <div class="dl">
+    <a class="btn" id="dlMain" href="#">Descargar</a>
+    <a class="btn sec" id="dlOther" href="#">Otra plataforma</a>
+  </div>
+  <p class="hint" id="hint">Detectando tu sistema…</p>
+
+  <div class="grid">
+    <div class="card si">
+      <h3>Qué mide</h3>
+      <ul>
+        <li>App/ventana activa y tiempo en cada una</li>
+        <li>Categoría (planilla, correo, navegador…)</li>
+        <li>Activo vs. inactivo</li>
+      </ul>
+    </div>
+    <div class="card no">
+      <h3>Qué nunca hace</h3>
+      <ul>
+        <li>Registrar lo que escribes</li>
+        <li>Guardar contraseñas o credenciales</li>
+        <li>Medir algo con la app en pausa</li>
+      </ul>
+    </div>
+  </div>
+
+  <p class="foot">NJ Watch Team · DropoutCapital. Uso interno con consentimiento del equipo.</p>
+</div>
+
+<script>
+  // Ajusta estas URLs a tus GitHub Releases cuando publiques los instaladores.
+  const REL = 'https://github.com/DropoutCapital/nj-watch-team/releases/latest/download/'
+  const WIN = REL + 'NJ-Watch-Team-Setup.exe'
+  const MAC = REL + 'NJ-Watch-Team.dmg'
+  const esMac = /Mac/i.test(navigator.platform) || /Mac/i.test(navigator.userAgent)
+  const main = document.getElementById('dlMain'), other = document.getElementById('dlOther')
+  if (esMac) { main.textContent='Descargar para Mac'; main.href=MAC; other.textContent='Descargar para Windows'; other.href=WIN; }
+  else       { main.textContent='Descargar para Windows'; main.href=WIN; other.textContent='Descargar para Mac'; other.href=MAC; }
+  document.getElementById('hint').textContent = 'Al instalar verás una pantalla de consentimiento. Puedes desactivar la medición cuando quieras.'
+</script>
+</body>
+</html>

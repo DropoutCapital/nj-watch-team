@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'">
+<title>NJ Watch Team</title>
+<style>
+  :root { --tinta:#111; --suave:#6b7280; --borde:#e5e7eb; --on:#16a34a; --off:#9ca3af; }
+  * { box-sizing:border-box; }
+  body { font:15px/1.5 -apple-system,Segoe UI,Roboto,sans-serif; color:var(--tinta); margin:0; padding:26px; background:#fafafa; }
+  .estado { text-align:center; margin-bottom:22px; }
+  .dot { width:14px; height:14px; border-radius:50%; display:inline-block; vertical-align:middle; margin-right:8px; }
+  .toggle { width:100%; padding:16px; border:0; border-radius:12px; font-size:16px; font-weight:700; color:#fff; cursor:pointer; margin:8px 0 20px; }
+  .card { background:#fff; border:1px solid var(--borde); border-radius:12px; padding:14px 16px; margin-bottom:14px; }
+  .card h3 { margin:0 0 8px; font-size:13px; text-transform:uppercase; letter-spacing:.04em; color:var(--suave); }
+  .row { display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px dashed #f0f0f0; }
+  .row:last-child { border:0; }
+  .chk { display:flex; align-items:center; gap:8px; margin:6px 0; font-size:14px; }
+  .nota { font-size:12px; color:var(--suave); text-align:center; margin-top:8px; }
+</style>
+</head>
+<body>
+  <div class="estado">
+    <h2 style="margin:0"><span class="dot" id="dot"></span><span id="estadoTxt">…</span></h2>
+    <div class="nota" id="quien"></div>
+  </div>
+
+  <button class="toggle" id="btn" onclick="toggle()">…</button>
+
+  <div class="card">
+    <h3>Hoy, por categoría</h3>
+    <div id="dia"><div class="nota">Aún no hay datos de hoy.</div></div>
+  </div>
+
+  <div class="card">
+    <h3>Opciones</h3>
+    <label class="chk"><input type="checkbox" id="titles"> Guardar título de ventana (puede incluir datos)</label>
+    <label class="chk"><input type="checkbox" id="screens"> Capturas de pantalla (anunciadas)</label>
+  </div>
+
+  <div class="nota">No registra lo que escribes ni contraseñas. En pausa no registra nada.</div>
+
+<script>
+  let S = null
+  async function refresh () { S = await watch.getState(); pinta() }
+  function fmt (s) { const h=Math.floor(s/3600), m=Math.round((s%3600)/60); return h? `${h}h ${m}m` : `${m}m` }
+  function pinta () {
+    const on = S.monitoring
+    document.getElementById('dot').style.background = on ? 'var(--on)' : 'var(--off)'
+    document.getElementById('estadoTxt').textContent = on ? 'Midiendo tu trabajo' : 'En pausa'
+    document.getElementById('quien').textContent = S.nombre ? S.nombre : ''
+    const b = document.getElementById('btn')
+    b.textContent = on ? 'Desactivar' : 'Activar'
+    b.style.background = on ? '#dc2626' : '#111'
+    const dia = document.getElementById('dia')
+    const cats = Object.entries(S.dia || {}).sort((a,b)=>b[1]-a[1])
+    dia.innerHTML = cats.length ? cats.map(([k,v])=>`<div class="row"><span>${k}</span><strong>${fmt(v)}</strong></div>`).join('') : '<div class="nota">Aún no hay datos de hoy.</div>'
+    document.getElementById('titles').checked = !!S.settings.captureTitles
+    document.getElementById('screens').checked = !!S.settings.captureScreens
+  }
+  async function toggle () { await watch.toggle(); await refresh() }
+  document.getElementById('titles').onchange = async e => { S = await watch.setSetting({ captureTitles: e.target.checked }) }
+  document.getElementById('screens').onchange = async e => { S = await watch.setSetting({ captureScreens: e.target.checked }) }
+  watch.onEstado(s => { S = s; pinta() })
+  refresh(); setInterval(refresh, 10000)
+</script>
+</body>
+</html>

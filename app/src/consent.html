@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'">
+<title>Consentimiento · NJ Watch Team</title>
+<style>
+  :root { --tinta:#1a1a1a; --suave:#6b7280; --borde:#e5e7eb; --ok:#16a34a; --no:#dc2626; }
+  * { box-sizing:border-box; }
+  body { font:15px/1.5 -apple-system,Segoe UI,Roboto,sans-serif; color:var(--tinta); margin:0; padding:28px; background:#fafafa; }
+  h1 { font-size:20px; margin:0 0 4px; }
+  .sub { color:var(--suave); margin:0 0 18px; }
+  .box { background:#fff; border:1px solid var(--borde); border-radius:12px; padding:16px; margin:0 0 16px; }
+  .si li { color:var(--ok); } .no li { color:var(--no); }
+  ul { margin:6px 0; padding-left:20px; } li { margin:3px 0; }
+  label { display:block; font-size:13px; color:var(--suave); margin:10px 0 3px; }
+  input { width:100%; padding:9px; border:1px solid var(--borde); border-radius:8px; font-size:14px; }
+  .fila { display:flex; gap:10px; margin-top:16px; }
+  button { flex:1; padding:11px; border:0; border-radius:9px; font-size:14px; font-weight:600; cursor:pointer; }
+  .aceptar { background:#111; color:#fff; } .rechazar { background:#f3f4f6; color:#374151; }
+</style>
+</head>
+<body>
+  <h1>Antes de empezar</h1>
+  <p class="sub">Esta herramienta mide tu trabajo para ayudar al equipo a automatizar tareas repetitivas. Tú la activas y la desactivas cuando quieras.</p>
+
+  <div class="box si">
+    <strong>Qué registra (solo con la medición activada):</strong>
+    <ul>
+      <li>Qué aplicación tienes al frente y por cuánto tiempo</li>
+      <li>Una categoría (navegador, planilla, correo…)</li>
+      <li>Si estás activo o inactivo</li>
+    </ul>
+  </div>
+  <div class="box no">
+    <strong>Qué NO registra, nunca:</strong>
+    <ul>
+      <li>Lo que escribes (ni textos ni mensajes)</li>
+      <li>Contraseñas ni credenciales</li>
+      <li>Nada cuando la medición está en pausa</li>
+    </ul>
+  </div>
+
+  <label>Tu nombre</label>
+  <input id="nombre" placeholder="Nombre y apellido">
+  <label>Correo (opcional)</label>
+  <input id="email" placeholder="tucorreo@empresa.cl">
+
+  <div class="fila">
+    <button class="rechazar" onclick="watch.rechazarConsent()">No acepto</button>
+    <button class="aceptar" onclick="aceptar()">Acepto y continúo</button>
+  </div>
+
+<script>
+  function aceptar () {
+    watch.aceptarConsent({
+      nombre: document.getElementById('nombre').value.trim(),
+      email: document.getElementById('email').value.trim()
+    })
+  }
+</script>
+</body>
+</html>

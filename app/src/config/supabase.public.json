@@ -1,0 +1,5 @@
+{
+  "_nota": "Estos dos valores son PÚBLICOS por diseño (la anon key está pensada para ir en el cliente). NUNCA pongas aquí la service_role key.",
+  "url": "https://qymfgxdgwofcrvzxrnke.supabase.co",
+  "anonKey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF5bWZneGRnd29mY3J2enhybmtlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIxNTIwOTMsImV4cCI6MjEwNzcyODA5M30.Oz3Z31ixqkws9bJAO0zJrm5B6ydnruM5Xcst5VVKCKU"
+}
