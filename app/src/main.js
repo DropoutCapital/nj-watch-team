@@ -105,28 +105,35 @@ async function registrarEmpleadoSiFalta () {
 
 async function toggle () {
   const c = cfg.load()
-  c.monitoring ? await detener() : await iniciar()
+  c.monitoring ? await detener() : iniciar()
   actualizarTray()
   if (win) win.webContents.send('estado', estado())
 }
 
-async function iniciar () {
+// Activa SIN bloquear por red: cambia el estado y arranca los timers al instante;
+// el registro en Supabase va en segundo plano (si no hay red, queda en cola).
+function iniciar () {
   const c = cfg.load()
   if (!c.consentAccepted) return
+  sesionId = crypto.randomUUID()
+  cfg.set({ monitoring: true })
+  buckets = new Map()
+  const s = c.settings
+  pollTimer = setInterval(poll, s.pollSeconds * 1000)
+  flushTimer = setInterval(flush, s.flushSeconds * 1000)
+  if (s.captureScreens) captureTimer = setInterval(maybeCapture, 30 * 1000)
+  try { new Notification({ title: 'NJ Watch Team', body: 'Medición ACTIVADA. Puedes desactivarla cuando quieras.' }).show() } catch {}
+  registrarYSesion().catch(e => console.warn('[iniciar bg]', e.message))
+}
+
+// Registro en segundo plano: empleado + sesión. sb.insert encola si no hay red.
+async function registrarYSesion () {
   await registrarEmpleadoSiFalta()
   const cc = cfg.load()
-  sesionId = crypto.randomUUID()
   await sb.insert('sesiones', {
     id: sesionId, empleado_id: cc.empleadoId,
     inicio: new Date().toISOString(), app_version: app.getVersion(), os: process.platform
   })
-  cfg.set({ monitoring: true })
-  buckets = new Map()
-  const s = cc.settings
-  pollTimer = setInterval(poll, s.pollSeconds * 1000)
-  flushTimer = setInterval(flush, s.flushSeconds * 1000)
-  if (s.captureScreens) captureTimer = setInterval(maybeCapture, 30 * 1000)
-  new Notification({ title: 'NJ Watch Team', body: 'Medición ACTIVADA. Puedes desactivarla cuando quieras.' }).show()
 }
 
 async function detener () {
@@ -163,8 +170,10 @@ function acumular (appName, cat, seg, idle, titulo = null) {
 }
 
 async function flush () {
-  if (!buckets.size || !sesionId) return
   const c = cfg.load()
+  // Espera a tener empleadoId (lo pone el registro en segundo plano); mientras,
+  // los datos se acumulan en memoria y no se pierden.
+  if (!buckets.size || !sesionId || !c.empleadoId) return
   const ts = new Date().toISOString()
   const filas = [...buckets.values()].map(b => ({
     id: crypto.randomUUID(), sesion_id: sesionId, empleado_id: c.empleadoId,
@@ -222,7 +231,7 @@ ipcMain.handle('aceptarConsent', async (_e, { nombre, email }) => {
   aplicarLoginItem(true)                 // desde ahora arranca con el PC
   win.loadFile(path.join(__dirname, 'renderer.html'))
   const c = cfg.load()
-  if (c.settings.autoStart && !c.monitoring) { await iniciar(); actualizarTray() }
+  if (c.settings.autoStart && !c.monitoring) { iniciar(); actualizarTray() }
 })
 ipcMain.handle('setSetting', (_e, patch) => {
   const c = cfg.load()
@@ -252,7 +261,7 @@ if (!unico) { app.quit() } else {
     aplicarLoginItem(c.consentAccepted)
     // Auto-reanudar la medición en cada arranque (sigue visible y pausable).
     if (c.consentAccepted && c.settings.autoStart && !c.monitoring) {
-      await iniciar()
+      iniciar()
       actualizarTray()
     }
     // Auto-actualización desde GitHub Releases (solo app empaquetada).
