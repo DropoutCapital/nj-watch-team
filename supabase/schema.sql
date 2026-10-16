@@ -9,10 +9,10 @@
 
 create table if not exists public.empleados (
   id          uuid primary key,              -- lo genera la app (crypto.randomUUID)
-  nombre      text not null,
-  email       text,
-  device_id   text not null,
-  os          text,
+  nombre      text not null check (char_length(nombre) <= 120),
+  email       text               check (char_length(email) <= 160),
+  device_id   text not null      check (char_length(device_id) <= 80),
+  os          text               check (char_length(os) <= 40),
   created_at  timestamptz not null default now()
 );
 
@@ -25,16 +25,17 @@ create table if not exists public.sesiones (
 );
 
 -- Un evento = "estuve X segundos en la app Y (categoría Z)". Sin texto tecleado.
+-- Los CHECK acotan el daño si alguien abusa de la anon key (ver nota RLS).
 create table if not exists public.eventos (
   id            uuid primary key,
   sesion_id     uuid not null references public.sesiones(id),
   empleado_id   uuid not null references public.empleados(id),
   ts            timestamptz not null,
-  app           text not null,               -- p.ej. "Google Chrome", "Excel"
-  categoria     text not null,               -- navegador, hoja_calculo, correo, ...
-  titulo        text,                         -- OPCIONAL, apagado por defecto
-  duracion_seg  int  not null default 0,
-  teclas_min    int,                          -- MÉTRICA: pulsaciones/min (NO el texto)
+  app           text not null check (char_length(app) <= 120),
+  categoria     text not null check (char_length(categoria) <= 40),
+  titulo        text          check (char_length(titulo) <= 300),
+  duracion_seg  int  not null default 0 check (duracion_seg between 0 and 86400),
+  teclas_min    int           check (teclas_min between 0 and 2000),
   idle          boolean not null default false
 );
 
